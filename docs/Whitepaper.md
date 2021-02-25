@@ -27,7 +27,7 @@ The YieldBlox protocol serves as a tier-3 blockchain app, a layer between YieldB
 
 ### High-Level Protocol Diagram
 
- ![alt text](https://raw.githubusercontent.com/optionblox/yieldblox-docs/main/media/High-Level%20YBX%20protocol.png "YBX Protocol")
+ ![protocol](_media/ybxProtocolHighLevel.png "YBX Protocol")
 
 ## Protocol Structure
 The YieldBlox protocol facilitates lending by utilizing a network of protocol accounts, tokens, and claimable balances.
@@ -174,7 +174,7 @@ Used to calculate the aggregated utilization ratio for a loan.
 #### Interest Rate Calculations
 YieldBlox uses a purely demand-based interest rate calculation, which means the only protocol variable involved in the equation is the utilization rate. This equation allows the protocol to more efficiently adjust for market conditions without changing a base interest rate. It also gives governance participants a large amount of flexibility when modifying protocol interest rates. The equation involves the Interest Numerator, Utilization Addend, and Utilization Factor constants which can be updated to change not only the slope of the interest rate curve, but also the curve's exponentiality and y-intercept. These constants are currently 10, 1.6, and -0.45, respectively, which results in the following curve.
 
- ![alt text](https://github.com/optionblox/yieldblox-docs/raw/main/media/YBX%20Interest%20Graph.png "Interest Rate Curve")
+ ![apr](_media/ybxInterestRates.png "Interest Rate Curve")
 
 ##### Interest Rate
 Used to calculate the current interest rate.
