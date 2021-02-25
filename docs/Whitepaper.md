@@ -15,10 +15,10 @@ This whitepaper covers the technical details of YieldBlox's decentralized lendin
 <p>&nbsp;</p>
 
 ## Table of Contents:
-- [Introduction](#introduction)
+- [Introduction](#Introduction)
 - [Protocol Structure](#protocol-structure)
 - [Lending Protocol txFunctions](#lending-txfunctions)
-- [Protocol Math](#math)
+- [Protocol Math](#protocol-calculations)
 
 <p>&nbsp;</p>
 
@@ -158,18 +158,18 @@ Used to calculate the current utilization ratio for an asset
 ![\Large](https://latex.codecogs.com/svg.latex?U%3D1-%5Cfrac%7BL%7D%7BL&plus;B%7D)
 
 *U* = Current Utilization Ratio\
-*L*= Total Liability Tokens. Tracked by YBX Tracker\
-*B*=Total Pool Balance
+*L* = Total Liability Tokens. Tracked by YBX Tracker\
+*B* = Total Pool Balance
 
 ##### Aggregated Utilization Ratio
 Used to calculate the aggregated utilization ratio for a loan. 
 
 ![\Large](https://latex.codecogs.com/svg.latex?U_a%20%3D%20%5Csum_%7Bi%3DT_b%7D%5E%7BT_r%7D%5Cfrac%7BA_i*%28T_i-T_%7Bi-1%7D%29%7D%7BT_i-T_%7Bi-1%7D%7D)
 
-*T<sub>r</sub>*= Time the loan was repaid at\
-*T<sub>b</sub>*=Time the loan was borrowed at\
-*A*=Amount of the payment to the utilization tracker. Equal to the utilization ratio at the time of payment\
-*T*=Time of the payment in milliseconds
+*T<sub>r</sub>* = Time the loan was repaid at\
+*T<sub>b</sub>* = Time the loan was borrowed at\
+*A* = Amount of the payment to the utilization tracker. Equal to the utilization ratio at the time of payment\
+*T* = Time of the payment in milliseconds
 
 #### Interest Rate Calculations
 YieldBlox uses a purely demand-based interest rate calculation, which means the only protocol variable involved in the equation is the utilization rate. This equation allows the protocol to more efficiently adjust for market conditions without changing a base interest rate. It also gives governance participants a large amount of flexibility when modifying protocol interest rates. The equation involves the Interest Numerator, Utilization Addend, and Utilization Factor constants which can be updated to change not only the slope of the interest rate curve, but also the curve's exponentiality and y-intercept. These constants are currently 10, 1.6, and -0.45, respectively, which results in the following curve.
@@ -181,42 +181,42 @@ Used to calculate the current interest rate.
 
 ![\Large](https://latex.codecogs.com/svg.latex?I%20%3D%28%5Cfrac%7Ba%7D%7B%281&plus;%2810e%29%5E%7B%28b&plus;c*U_r%29%7D%29%7D%29)
 
-*I*= Interest Rate\
-*U<sub>r</sub>*= Utilization Ratio\
-*a*= Interest Numerator. Set by pool\
-*b*= Utilization Addend. Set by pool\
-*c*= Utilization Factor. Set by pool
+*I* = Interest Rate\
+*U<sub>r</sub>* = Utilization Ratio\
+*a* = Interest Numerator. Set by pool\
+*b* = Utilization Addend. Set by pool\
+*c* = Utilization Factor. Set by pool
 
 ##### Interest Accrued
 Used to calculate the interest fee accrued by a loan.
 
 ![\Large](https://latex.codecogs.com/svg.latex?I_a%20%3DA*%28%5Cfrac%7Ba%7D%7B%281&plus;%2810e%29%5E%7B%28b&plus;c*U_a%29%7D%29%7D%29)
 
-*I<sub>a</sub>*= Accrued interest\
-*A*= Loan amount\
-*U<sub>a</sub>*= Aggregated Utilization Ratio\
-*a*= Interest Numerator. Set by pool\
-*b*= Utilization Addend. Set by pool\
-*c*= Utilization Factor. Set by pool
+*I<sub>a</sub>* = Accrued interest\
+*A* = Loan amount\
+*U<sub>a</sub>* = Aggregated Utilization Ratio\
+*a* = Interest Numerator. Set by pool\
+*b* = Utilization Addend. Set by pool\
+*c* = Utilization Factor. Set by pool
 
 #### Min Collateral Requirement
 Used to calculate the Minimum Collateral Requirement for a loan.
 
 ![\Large](https://latex.codecogs.com/svg.latex?C_m%20%3D%20%5Cfrac%7BA%7D%7BC_b%7D)
 
-*C<sub>m</sub>*=  Minimum Collateral Requirement\
+*C<sub>m</sub>* =  Minimum Collateral Requirement\
 *A*= Loan Amount\
-*C<sub>b</sub>*= Base Collateral Factor. Set by pool
+*C<sub>b</sub>* = Base Collateral Factor. Set by pool
 
 #### Pool Tokens Issued
 Used to calculate the number of pool tokens issued to a lender.
 
 ![\Large](https://latex.codecogs.com/svg.latex?P_i%20%3D%20%5Cfrac%7B%5Cfrac%7BR_n%7D%7BR_c&plus;L%7D*P_o%7D%7B1-%5Cfrac%7BR_n%7D%7BR_c&plus;L%7D%7D)
 
-*P<sub>i</sub>*= New pool tokens that will be issued to the lender\
-*P<sub>o</sub>*= Current outstanding pool tokens\
-*R<sub>n</sub>*= Assets the user is adding to the lending pool\
-*R<sub>c</sub>*= Current pool reserves of the asset the user is lending\
+*P<sub>i</sub>* = New pool tokens that will be issued to the lender\
+*P<sub>o</sub>* = Current outstanding pool tokens\
+*R<sub>n</sub>* = Assets the user is adding to the lending pool\
+*R<sub>c</sub>* = Current pool reserves of the asset the user is lending\
 *L*= Current outstanding liability tokens for the asset the user is lending
 
 #### Asset payout
@@ -225,10 +225,10 @@ Used to calculate the asset payout for a given number of burned pool tokens.
 ![\Large](https://latex.codecogs.com/svg.latex?P%20%3D%20%28A_b&plus;L%29%5Cfrac%7BP_b%7D%7BP_t%7D)
 
 *P*= Amount of the asset paid out\
-*A<sub>b</sub>*= Pool balance of the underlying asset of the pool token being burned\
-*L*= Total liability tokens outstanding for the underlying asset of the pool token being burned\
-*P<sub>b</sub>*= Number of pool tokens burned\
-*P<sub>t</sub>*= Total number of pool tokens
+*A<sub>b</sub>* = Pool balance of the underlying asset of the pool token being burned\
+*L* = Total liability tokens outstanding for the underlying asset of the pool token being burned\
+*P<sub>b</sub>* = Number of pool tokens burned\
+*P<sub>t</sub>* = Total number of pool tokens
 
 
 
