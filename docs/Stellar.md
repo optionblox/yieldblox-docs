@@ -1,4 +1,4 @@
-# Stellar - The ideal platform for OptionBlox
+# Stellar - The ideal platform for YieldBlox
 YieldBlox uses Stellar's decentralized ledger to support its protocol.
 
 In Stellar’s words:  
@@ -10,13 +10,13 @@ Stellar's open network allows anyone to submit a transaction to change the ledge
 
 For more general information visit: [Stellar's Website](https://www.stellar.org/developers/guides/walkthroughs/stellar-smart-contracts.html).  
 For more information on how the nodes validate transactions see: [Stellar Consensus Protocol](https://www.stellar.org/developers/guides/concepts/scp.html).  
-For more information on how OptionBlox interacts with Stellar’s network visit: [Network Overview](https://www.stellar.org/developers/guides/get-started/index.html).
+For more information on how YieldBlox interacts with Stellar’s network visit: [Network Overview](https://www.stellar.org/developers/guides/get-started/index.html).
 
 ## Why we built on Stellar
 Stellar’s focus on financial applications has made it the ideal network to develop YieldBlox on.\
 Characteristics of the Stellar network crucial to YieldBlox:
 - *Efficiency*:  
-Stellar’s network is efficient, having both fast transaction times and low fees. This is essential for a derivative market and is one of the main areas where Stellar shines versus other networks like Ethereum.  
+Stellar’s network is efficient, having both fast transaction times and low fees. This is essential for a lending market and is one of the main areas where Stellar shines versus other networks like Ethereum.  
 - *Decentralization*:  
 Stellar's network is fully decentralized. There is no governing body YieldBlox needs to rely on; as long as Stellar has users, YieldBlox will function.
 - *[Anchors](https://www.stellar.org/developers/guides/concepts/assets.html)*  
@@ -43,14 +43,14 @@ Stellar's consensus protocol rejects transactions when they do not align with th
 [More Info](https://www.stellar.org/developers/guides/concepts/scp.html)  
 
 - *SEP-0007 Integration*:\
-The YieldBlox web-app uses Stellar's SEP-0007 protocol to send transaction envelopes to users who can then add their signature in a trusted wallet or exchange. This ensures that the OptionBlox app will never have to serve as custodian over user funds or keys.\
+The YieldBlox web-app uses Stellar's SEP-0007 protocol to send transaction envelopes to users who can then add their signature in a trusted wallet or exchange. This ensures that the YieldBlox app will never have to serve as custodian over user funds or keys.\
 [More Info](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0007.md)
 
 <p>&nbsp;</p>
 
 ## Anchors:
 
-The functionality of YieldBlox is tied directly to the availability of Anchors in the Stellar ecosystem. To use a non-native asset as a derivative contract’s underlying asset, a third party must already be anchoring the asset.  
+The functionality of YieldBlox is tied directly to the availability of Anchors in the Stellar ecosystem. To lend or borrow a non-native asset, a third party must already be anchoring the asset.  
 Here are some non-native assets that are currently anchored by reputable parties:
 - USDC: US dollar anchor provided by [centus](https://www.anchorusd.com/), a circle and coinbase initiative.
 - XCN: Chinese yuan anchor provided by [FChain](https://fchain.io).  
@@ -63,4 +63,4 @@ Here are some non-native assets that are currently anchored by reputable parties
 
 More anchors can be viewed on [Steller Expert]( https://stellar.expert/explorer/public/)
 
-As Stellar's network grows, we are confident that more anchors will materialize and expand OptionBlox's functionality.
+As Stellar's network grows, we are confident that more anchors will materialize and expand YieldBlox's functionality.
