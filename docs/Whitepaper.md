@@ -10,7 +10,7 @@ Alexander Mootz: alex@script3.io
 
 ## Abstract
 
-This whitepaper covers the technical details of YieldBlox's decentralized lending protocol. These details include explanations of the protocol tokens, accounts, and TSS(Turing Signing Server) txFunctions (Smart Contracts) that encompass the YieldBlox lending protocol. This whitepaper will be continually updated as details regarding YieldBlox's core protocols change. Currently, it covers the base protocol structure and math.
+This whitepaper covers the technical details of YieldBlox's decentralized lending protocol. These details include explanations of the protocol tokens, accounts, and TSS(Turing Signing Server) txFunctions(Smart Contracts) that encompass the YieldBlox lending protocol. This whitepaper will be continually updated as details regarding YieldBlox's protocol change. Currently, it covers the base protocol structure and math.
 
 <p>&nbsp;</p>
 
@@ -23,7 +23,7 @@ This whitepaper covers the technical details of YieldBlox's decentralized lendin
 <p>&nbsp;</p>
 
 ## Introduction:
-The YieldBlox protocol serves as a tier-3 blockchain app, a layer between YieldBlox web-app users and the Stellar ledger. Users link their wallets to YieldBlox's web-app, which takes user inputs and communicates them to the YieldBlox protocol. The protocol uses TSS(Turing Signing Server) txFunctions to build and sign Stellar transactions that carry out protocol operations. Users approve these transactions with their wallet and receive the result of their transaction, whether that's pool tokens or a loan.
+The YieldBlox protocol serves as a tier-3 blockchain app, a layer between YieldBlox web-app users and the Stellar ledger. Users link their wallets to YieldBlox's web-app, which takes user inputs and communicates them to the YieldBlox protocol. The protocol uses TSS txFunctions to build and sign Stellar transactions that carry out protocol operations. Users approve these transactions with their wallet and receive the result of their transaction, whether that's pool tokens or a loan.
 
 ### High-Level Protocol Diagram
 
@@ -32,20 +32,20 @@ The YieldBlox protocol serves as a tier-3 blockchain app, a layer between YieldB
 ## Protocol Structure
 The YieldBlox protocol facilitates lending by utilizing a network of protocol accounts, tokens, and claimable balances.
 ### Loan Terms
-Loans can be taken for any time period as long as the user maintains a collateral balance greater than 110% of the value of their loan plus their loan's accrued interest. If the collateral balance falls below 110% of the loan value plus the value of the loan's accrued interest, the loan can be liquidated by another protocol participant.
+Loans can be taken out for any time period as long as the user maintains a collateral balance greater than 110% of the value of their loan plus their loan's accrued interest. If the collateral balance falls below 110% of the loan value plus the value of the loan's accrued interest, the loan can be liquidated by another protocol participant.
 
 ### Protocol Data Feeds
 The YieldBlox protocol relies on liability, utilization, and price feeds to function. 
 #### Liability Feed
-The protocol tracks its total liabilities by sending liability tokens to the YieldBlox Feed account when a loan is originated and by burning those tokens when it is repaid. This process is necessary to allow the protocol and protocol data consumers to calculate total pool liabilities quickly.
+The protocol tracks its total liabilities by sending liability tokens to the YieldBlox Tracker account when a loan is originated and by burning those tokens when it is repaid. This process is necessary to allow the protocol and protocol data consumers to calculate total pool liabilities quickly.
 ### Utilization Feed
-The protocol tracks its utilization over time by sending utilization tokens to the YieldBlox Feed account whenever a loan is originated, pool tokens are minted, or pool tokens are burned. This process is necessary to allow the protocol to determine the average utilization rate over a loan's lifecycle, which is required to calculate a loan's accrued interest fees.
+The protocol tracks its utilization over time by sending utilization tokens to the YieldBlox Tracker account whenever a loan is originated, pool tokens are minted, or pool tokens are burned. This process is necessary to allow the protocol to determine the average utilization rate over a loan's lifecycle, which is required to calculate a loan's accrued interest fees.
 ### Price Feed
 The protocol tracks users' collateral value with a price feed that pulls price data from centralized exchanges like Coinbase, averages them, and sanity checks them against the DEX TWAP(time-weighted-average-price). The price feed is only a temporary solution as a dedicated oracle solution for TSS apps is currently in the works. More details on this feed are available on our docs page: https://docs.yieldblox.com/#/
 
 ### Protocol Tokens
 #### Pool Tokens
-YieldBlox pool tokens are sent to protocol lenders in exchange for the assets they lend the protocol. These tokens represent the portion of the associated underlying asset in the pool that the user owns. The value of pool tokens increases over time as the pool intakes interest fees. There is a separate pool token for each asset held in the YieldBlox lending pool.
+YieldBlox pool tokens are sent to protocol lenders in exchange for the assets they lend the protocol. These tokens represent the portion of the associated underlying asset in the pool that the lender owns. The value of pool tokens increases over time as the pool intakes interest fees. There is a separate pool token for each asset held in the YieldBlox lending pool.
 
 **Token Identification:**
 - Pool tokens are issued by the YieldBlox lending pool account
@@ -70,7 +70,7 @@ YieldBlox uses a token-based governance model. Users receive governance tokens f
 - The asset code for governance tokens is `YBX`
 ### Protocol Accounts
 #### YieldBlox Lending Pool
-The YieldBlox Lending pool holds all assets deposited by lenders and lends them out to borrowers. It also issues pool tokens to lenders and governance tokens to lenders and borrowers. Finally, it stores critical protocol information in its data entries and claimable balances.
+The YieldBlox Lending Pool holds all assets deposited by lenders and lends them out to borrowers. It also issues pool tokens to lenders and governance tokens to lenders and borrowers. Finally, it stores critical protocol information in its data entries and claimable balances.
 
 **Account Claiamable Balances**
 1. *Liability Claimable Balances*: Used to track a user's loan value. When a user originates a loan, the lending pool creates a claimable balance of liability tokens equal to the number of tokens borrowed. The pool can claim this claimable balance at any time, and the user can claim it in 100 years. This claimable balance structure allows the protocol to easily discover a user's liabilities and the amount of time the liabilities have been outstanding. The claimable balance is deleted when the user repays the loan or when the loan is liquidated. 
@@ -118,10 +118,10 @@ This account receives utilization token payments and liability token payments fr
 - Liquidate txFunction: 3 signers, weight 10
 - Governance txFunction: 5 signers, weight 10
 #### User Account
-While the User Account is not a protocol account in the sense that the protocol controls it, it still plays a critical role in the protocol by holding the user's collateral balance in a claimable balance.
+While the User Account is not a protocol account in the sense that the protocol controls it, it still plays a critical role by holding the user's collateral balance in a claimable balance.
 
 **Claimable Balances**
-- *Collateral Claimable Balance*: The mint txFunction creates this claimable balance to provide collateral to the protocol when the user takes out a loan. If the user wishes to deposit additional collateral, they can create additional claimable balances in their account. The claimable balances must be structured to be claimable by the pool at any time and claimable by the user in 100 years. When a user's loan is repaid or liquidated, the pool claims the claimable balance and either returns it to the user (if the loan was properly repayed), confiscates it, and pays it to the loan liquidator (if the loan was liquidated).
+- *Collateral Claimable Balance*: The Mint txFunction creates this claimable balance to provide collateral to the protocol when the user takes out a loan. If the user wishes to deposit additional collateral, they can create additional claimable balances in their account. The claimable balances must be structured to be claimable by the pool at any time and claimable by the user in 100 years. When a user's loan is repaid or liquidated, the pool claims the claimable balance and either returns it to the user (if the loan was properly repayed), or confiscates it and pays it to the loan liquidator (if the loan was liquidated).
 
 ### Lending txFunctions
 This section provides a brief overview of the txFunctions involved in the YieldBlox lending protocol. The full txFunctions will be publicly available on the YieldBlox GitHub repository once we officially launch our beta. If you would like more technical details on the txFunctions, feel free to contact us.
@@ -139,7 +139,7 @@ The Repay txFunction is used to repay loans. Users send the repayment to the poo
     - Calculations Used:
         1. Interest Accrued
 4. *Liquidate txFunction*\
-The Liquidate txFunction is used to liquidate a delinquent loan. Loans can be liquidated when they reach a 97% (loan value)+(interest accrued) to (collateral value) ratio. The liquidator repays the delinquent loan and is send the value of their repayment in collateral along with a small liquidation incentive. The rest of the collateral balance is sent to the pool.
+The Liquidate txFunction is used to liquidate a delinquent loan. Loans can be liquidated when they reach a 95% (loan value)+(interest accrued) to (collateral value) ratio. The liquidator repays the delinquent loan and is send the value of their repayment in collateral along with a small liquidation incentive. The rest of the collateral balance is sent to the pool.
     - Calculations used:
         1. Asset Payout: Used to value the pool tokens used collateral
         2. Interest Accrued
@@ -147,7 +147,7 @@ The Liquidate txFunction is used to liquidate a delinquent loan. Loans can be li
 5. *Governance txFunction*\
 The Governance txFunction is used to modify the protocol, from tweaking the interest rate calculation to modifying the core txFunctions. Governance is a three-stage txFunction. 
     1. First Stage: The first stage creates a governance proposal by creating a proposal account that contains the proposed update's transaction hash as a signer. Users vote on the proposal by adding trustlines for `YES:proposalAccount` or `NO:proposalAccount assets`. 
-    2. Second Stage: At the end of a 3 day period, the votes are tallied by running the Governance txFunction again and providing the proposal account's public key. Each user account's vote is worth the number of governance tokens that the account holds. If a proposal passes, then the proposal account marks itself as approved using an account data entry. 
+    2. Second Stage: At the end of a 3 day period, the votes are tallied by running the Governance txFunction again and providing the proposal account's public key. Each user's vote is worth the number of governance tokens that their account holds. If a proposal passes, then the proposal account marks itself as approved using an account data entry. If it fails the proposal account is deleted.
     3. Third Stage: After 2 days have passed, the governance txFunction is ran a third time and provided the proposal account's public key to carry out the third stage of the txFunction. This stage signs the proposed update's transaction hash approving it to be submitted.  
 6. *Flash txFunction*\
 This txFunction allows users to take out flash loans. Users can borrow any amount of assets from the lending pool as long as they repay the assets in the same transaction envelope that they borrow them in. This txFunction will not be turned on initially.
