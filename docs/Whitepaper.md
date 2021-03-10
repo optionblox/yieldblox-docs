@@ -38,9 +38,9 @@ Loans can be taken out for any time period as long as the user maintains a colla
 The YieldBlox protocol relies on liability, utilization, and price feeds to function. 
 #### Liability Feed
 The protocol tracks its total liabilities by sending liability tokens to the YieldBlox Tracker account when a loan is originated and by burning those tokens when it is repaid. This process is necessary to allow the protocol and protocol data consumers to calculate total pool liabilities quickly.
-### Utilization Feed
+#### Utilization Feed
 The protocol tracks its utilization over time by sending utilization tokens to the YieldBlox Tracker account whenever a loan is originated, pool tokens are minted, or pool tokens are burned. This process is necessary to allow the protocol to determine the average utilization rate over a loan's lifecycle, which is required to calculate a loan's accrued interest fees.
-### Price Feed
+#### Price Feed
 The protocol tracks users' collateral value with a price feed that pulls price data from centralized exchanges like Coinbase, averages them, and sanity checks them against the DEX TWAP(time-weighted-average-price). The price feed is only a temporary solution as a dedicated oracle solution for TSS apps is currently in the works. More details on this feed are available on our docs page: https://docs.yieldblox.com/#/
 
 ### Protocol Tokens
@@ -50,24 +50,28 @@ YieldBlox pool tokens are sent to protocol lenders in exchange for the assets th
 **Token Identification:**
 - Pool tokens are issued by the YieldBlox lending pool account
 - The naming convention for pool token's code is `y[underlying-asset-code]`
+
 #### Liability Tokens
 Liability tokens track users' borrowed assets. They are created and sent to the YieldBlox Tracker account when a borrower originates a loan and burned when that loan is repaid or liquidated. In addition, the pool creates a claimable balance of liability tokens when a loan is originated that is claimable by the borrower in 100 years. This claimable balance tracks a borrower's liabilities and the time they have been outstanding. When the borrower repays their loan, the claimable balance is deleted. There is a separate liability token for each asset held in the YieldBlox lending pool.
 
 **Token Identification:**
 - Liability tokens are issued by the YieldBlox lending pool account
 - The naming convention for liability token's code is `l[underlying-asset-code]`
+
 #### Utilization Tokens
 Utilization tokens track the pool's asset utilization ratios(the percentage of the pool's balance of that asset currently lent out). Whenever a txFunction modifies the pool's asset balances, the txFunction sends a utilization token payment to the YieldBlox Tracker account. The payment amount reflects the loan pool's current utilization ratio for the asset that had its balance modified. There is a separate utilization token for each asset held in the YieldBlox lending pool.
 
 **Token Identification:**
 - Utilization tokens are issued by the YieldBlox lending pool account
 - The naming convention for the utilization token's code is `u[underlying-asset-code]`
+
 #### Governance Token
 YieldBlox uses a token-based governance model. Users receive governance tokens for participating in the YieldBlox protocol by lending or borrowing. They can then use these tokens to create governance proposals that modify the YieldBlox protocol and vote on governance proposals. For information on the YileBlox governance system, see our docs page: https://docs.yieldblox.com/#/
 
 **Token Identification:**
 - Governance tokens are issued by the YieldBlox lending pool account
 - The asset code for governance tokens is `YBX`
+
 ### Protocol Accounts
 #### YieldBlox Lending Pool
 The YieldBlox Lending Pool holds all assets deposited by lenders and lends them out to borrowers. It also issues pool tokens to lenders and governance tokens to lenders and borrowers. Finally, it stores critical protocol information in its data entries and claimable balances.
@@ -100,6 +104,7 @@ The YieldBlox Lending Pool holds all assets deposited by lenders and lends them 
 - Liquidate txFunction: 3 signers, weight 10
 - Flash txFunction: 3 signers, weight 10
 - Governance txFunction: 5 signers, weight 10
+
 #### YieldBlox Tracker
 This account receives utilization token payments and liability token payments from the YieldBlox lending pool. These payments are aggregated to calculate the average utilization ratio for a loan and the pool's total utilization.
 
@@ -117,6 +122,7 @@ This account receives utilization token payments and liability token payments fr
 - Repay txFunction: 3 signers, weight 10
 - Liquidate txFunction: 3 signers, weight 10
 - Governance txFunction: 5 signers, weight 10
+
 #### User Account
 While the User Account is not a protocol account in the sense that the protocol controls it, it still plays a critical role by holding the user's collateral balance in a claimable balance.
 
@@ -151,6 +157,7 @@ The Governance txFunction is used to modify the protocol, from tweaking the inte
     3. Third Stage: After 2 days have passed, the governance txFunction is ran a third time and provided the proposal account's public key to carry out the third stage of the txFunction. This stage signs the proposed update's transaction hash approving it to be submitted.  
 6. *Flash txFunction*\
 This txFunction allows users to take out flash loans. Users can borrow any amount of assets from the lending pool as long as they repay the assets in the same transaction envelope that they borrow them in. This txFunction will not be turned on initially.
+
 ### Protocol Calculations
 #### Utilization Ratio Calculations
 Used to calculate the current utilization ratio for an asset
