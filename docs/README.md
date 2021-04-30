@@ -5,10 +5,10 @@ As you can probably tell, this docs page is currently under development. We will
 
 Please view YieldBlox’s Stellar Seed Fund Submission: https://communityfund.stellar.org/seed-fund#/entry/1e354b3b328209c85dc1d978cb1ea527d5df60dc04d8ae794f04517bea01d852
 ### Roadmap
- 1. *Q1 2021*
+ 1. *Q2 2021*
    - Develop YieldBlox TSS Protocol
    - Develop YieldBlox WebApp
- 2. *Q2 2021*
+ 2. *Q3-Q4 2021*
    - Launch Yield-Blox Open Beta
 
 ### How to Reach Us
