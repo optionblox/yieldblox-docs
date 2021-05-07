@@ -197,7 +197,7 @@ Used to track the overall utilization delta of a transaction. This allows the pr
 ##### Utilization Adjustment
 Used to calculate the necessary utilization ratio delta adjustment 
 
-![\Large](https://latex.codecogs.com/svg.latex?U_a%20%3D%20%5Csum_%7Bi%3DT_%7B\Delta%20l%7D%7D%5E%7BT_%7B\Delta%20w%7D%7D%28%5Cfrac%7BL_%7Bi-2%7D%7D%7BL_%7Bi-2%7D+B_%7Bi-2%7D%7D*%28b_%7Bi-1%7D-b_%7Bi-2%7D%29%29-U_%7Bdi%7D-U_%7Bai%7D)
+![\Large](https://latex.codecogs.com/svg.latex?U_a%20%3D%20%5Csum_%7Bi%3DT_%7B\Delta%20l%7D%7D%5E%7BT_%7B\Delta%20w%7D%7D%5Cfrac%7BL_%7Bi-2%7D%7D%7BL_%7Bi-2%7D+B_%7Bi-2%7D%7D*%28b_%7Bi-1%7D-b_%7Bi-2%7D%29%29-U_%7Bdi%7D-U_%7Bai%7D)
 
 *L<sub>i-3</sub>*= Total liability tokens at the ledger state of the utilization-modifying transaction 3 utilization-modifying transactions ago\
 *B<sub>i-3</sub>*= Total pool balance at the ledger state of the utilization-modifying transaction 3 utilization-modifying transactions ago\
