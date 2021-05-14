@@ -13,7 +13,7 @@ Used to calculate the total governance tokens to be issued for a given week. Thi
 *B<sub>i</sub>*= The remaining number of governance tokens to be issued\
 *k*=A constant of fit proportions equal to 1.0000003443085\
 *A<sub>0</sub>*= The original governance issuance of 3,000,000\
-*B<sub>0-1</sub>*=The total number of tokens to be allocated; 15,000,000\
+*B<sub>0-1</sub>*=The total number of tokens to be allocated; 15,000,000
 
 #### Governance Issuance Graph
 
