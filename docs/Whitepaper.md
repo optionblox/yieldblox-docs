@@ -69,7 +69,9 @@ Liability tokens track users' borrowed assets. The pool creates a claimable bala
 
 #### Utilization Tokens
 Utilization tokens track the pool's asset utilization ratios(the percentage of the pool's balance of that asset currently lent out). 
-There is a separate utilization token for each asset held in the YieldBlox lending pool.
+There is a separate utilization token for each asset held in the YieldBlox lending pool. 
+
+The YieldBlox tracker account has clawback enabled so that it can clawback this asset. 
 
 **Token Identification:**
 - Utilization tokens are issued by the YieldBlox tracker account
@@ -133,6 +135,9 @@ This account sends utilization token payments to the pool account when the utili
 - Liquidate txFunction: 3 signers, weight 10
 - Governance txFunction: 5 signers, weight 10
 
+*Flags*
+- AuthRevokable
+- ClawbackEnabled
 #### User Account
 While the User Account is not a protocol account in the sense that the protocol controls it, it still plays a critical role by sponsoring claimable balances that track the user's collateral and liabilities.
 
