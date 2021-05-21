@@ -34,7 +34,9 @@ The YieldBlox protocol facilitates lending by utilizing a network of protocol ac
 ### Loan Terms
 Loans can be taken out for any time period as long as the user maintains an account health factor above 1 (an accounts health factor is based on the accounts total liability value, collateral value, and collateral liquidation factors). If the accounts health factor falls below 1, the accounts loans can be liquidated by another protocol participant until their account health factor increases to 1.01.
 ### Loan Interest Rates
-Users can borrow from YieldBlox at either fixed or floating rates. Floating rates are based purely on demand and will fluctuate based on the borrowed assets utilization ratio. Fixed rates are a multiple of the floating rate at loan origination. They will always be higher than floating rates but some borrowers may prefer the stability of fixed rates rates. A loans fixed rate can be force rebalanced up to the current stable rate if the loans rate has fallen below the market floating rate. This is accomplished with the swapRate txFunction. User's can also use the swapRate txFunction to swap their loan from fixed to the current floating rate or from floating to the current fixed rate.
+Users can borrow from YieldBlox at either fixed or floating rates. Floating rates are based purely on demand and will fluctuate based on the borrowed assets utilization ratio. Fixed rates are a multiple of the floating rate at loan origination. They will always be higher than floating rates but some borrowers may prefer the stability of fixed rates rates. 
+#### Rate Swapping
+A loans fixed rate can be force rebalanced up to the current stable rate if the loans rate has fallen below the market floating rate. This is accomplished with the swapRate txFunction. User's can also use the swapRate txFunction to swap their loan from fixed to the current floating rate or from floating to the current fixed rate.
 ### Protocol Data Feeds
 The YieldBlox protocol relies on utilization and price feeds to function. 
 #### Utilization Feed
@@ -227,44 +229,40 @@ Used to calculate the aggregated utilization ratio for a loan based on the amoun
 
 
 #### Interest Rate Calculations
-YieldBlox uses a purely demand-based interest rate calculation, which means the only protocol variable involved in the equation is the utilization rate. This equation allows the protocol to more efficiently adjust for market conditions without changing a base interest rate. It also gives governance participants a large amount of flexibility when modifying protocol interest rates. The equation involves the Interest Numerator, Utilization Addend, and Utilization Factor constants which can be updated to change not only the slope of the interest rate curve, but also the curve's exponentiality and y-intercept. These constants are currently 10, 1.6, and -0.45, respectively, which results in the following curve.
+YieldBlox uses an exponential demand-based interest rate calculation, which means the interest rate exponentially increases as the utilization ratio increases. This equation allows the protocol to more efficiently adjust for market conditions. It also gives governance participants a large amount of flexibility when modifying protocol interest rates. The equation involves Exponential, Base Interest Rate, and Peak Rate constants which can be updated to change not only the slope of the interest rate curve, but also the curve's exponentiality and y-intercept. These constants are currently 500, 0.05, and 11,000, respectively, which results in the following interest rate curves for floating and fixed rates.
 
  ![apr](_media/ybxInterestRates.png "Interest Rate Curve")
 
 ##### Interest Rate
 Used to calculate the current interest rate.
 
-![\Large](https://latex.codecogs.com/svg.latex?I%20%3D%5Cfrac%7Ba%7D%7B1&plus;%2810e%29%5E%7Bb&plus;c*U_r%7D%7D)
+![\Large](https://latex.codecogs.com/svg.latex?I%20%3D%5Cfrac%7B%280.0003%5E%7B-U%7D+a%29U%7D%7Bc%7D+b)
 
 *I* = Interest Rate\
 *U<sub>r</sub>* = Utilization Ratio\
-*a* = Interest Numerator. Set by pool\
-*b* = Utilization Addend. Set by pool\
-*c* = Utilization Factor. Set by pool
+*a* = Exponential constant. Controls curve exponentiality. Set by a pool data entry.\
+*b* = Base interest rate constant. Controls base interest rate. Set by a pool data entry\
+*c* = Peak rate constant. Controls peak interest rate. Set by a pool data entry.
 
 ##### Interest Accrued
 Used to calculate the interest fees accrued by a loan.
 
-![\Large](https://latex.codecogs.com/svg.latex?I_a%20%3DA*%5Cfrac%7Ba%7D%7B1&plus;%2810e%29%5E%7Bb&plus;c*U_a%7D%7D)
+![\Large](https://latex.codecogs.com/svg.latex?I_a%20%3D%5Cfrac%7B%280.0003%5E%7B-U_a%7D+a%29U%7D%7Bc%7D+b)
 
 *I<sub>a</sub>* = Accrued interest\
 *A* = Loan amount\
 *U<sub>a</sub>* = Aggregated Utilization Ratio\
-*a* = Interest Numerator. Set by pool\
-*b* = Utilization Addend. Set by pool\
-*c* = Utilization Factor. Set by pool
+*a* = Exponential constant. Controls curve exponentiality. Set by a pool data entry.\
+*b* = Base interest rate constant. Controls base interest rate. Set by a pool data entry\
+*c* = Peak rate constant. Controls peak interest rate. Set by a pool data entry.
 
 ##### Stable Rate
 Used to calculate the stable interest rate for a loan
 
-![\Large](https://latex.codecogs.com/svg.latex?I_a%20%3D%5Cfrac%7Ba%7D%7B1&plus;%2810e%29%5E%7Bb&plus;c*U_a%7D%7D+I)
+![\Large](https://latex.codecogs.com/svg.latex?I_a%20%3DI+I%281.05-U%29)
 
-*I<sub>s</sub>*= Stable rate
-*U*= Utilization ratio at the time the loan was originated
-*U<sub>o</sub>*= Optimal utilization ratio. Set by a pool data entry. Initially set at .83. Equal to the point at which the formulaic interest rate begins increasing at a rate greater than the ¼ the rate that the utilization ratio increases at.
-*a*= Interest Numerator. Set by a pool data entry. Initially set at 10
-*b*= Utilization Addend. Set by a pool data entry. Initially set at 1.6
-*c*= Utilization Factor. Set by a pool data entry. Initially set at -0.45
+*I<sub>s</sub>*= Stable rate\
+*U*= Utilization ratio at the time the loan was originated\
 *I*= Current interest rate
 
 #### Min Collateral Requirement
