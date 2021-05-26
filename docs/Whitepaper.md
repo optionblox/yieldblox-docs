@@ -333,6 +333,12 @@ Used to calculate the asset payout for a given number of burned pool tokens.
 *T<sub>b</sub>* = Number of pool tokens burned\
 *T<sub>t</sub>* = Total number of pool tokens
 
+#### YBX Issuance
+Used to calculate the amount of YBX that should be issued at a given time.
 
+![\Large](https://latex.codecogs.com/svg.latex?I%20%3D%201.00000034430845^%7BT+25,000,000-O%7D)
 
+*I*= YBX issued in this instance\
+*T* = Total YBX tokens to be issued\
+*O* = Total YBX tokens currently outstanding\
 
