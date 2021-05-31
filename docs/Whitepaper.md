@@ -84,7 +84,7 @@ Governance issuance tracker tokens are used to track the issuance that is alloca
 
 **Token Identification:**
 - Governance issuance tracker tokens are issued by the governance issuance tracker account
-- The naming converntion for the token is `g[underlying-issuer-code][asset-overlap-code][underlying-asset-code]`
+- The naming converntion for the token is `[y/l][underlying-issuer-code][asset-overlap-code][underlying-asset-code]`
 
 #### Governance Token
 YieldBlox uses a token-based governance model. Users receive governance tokens for participating in the YieldBlox protocol by lending or borrowing. They can then use these tokens to create governance proposals that modify the YieldBlox protocol and vote on governance proposals. For information on the YieldBlox governance system, see our docs page: https://docs.yieldblox.com/#/
@@ -100,7 +100,7 @@ The YieldBlox Lending Pool holds all assets deposited by lenders and lends them 
 **Account Data Entries**
 1. *Asset Data*: Stores underlying asset information. Seperate data entry for every asset supported by the pool
     - Data entry key: `[underlying-issuer-code][asset-overlap-code][underlying-asset-code(first 9 characters)]_Data`
-    - Data entry value: `[interest-rate-numerator]_[utilization-factor]_[utilization-addend]_[liquidation-factor]_[liquidation-incentive]_[governance-allocation]_[last-3-asset-code-characters]`
+    - Data entry value: `[interest-rate-numerator]_[utilization-factor]_[utilization-addend]_[liquidation-factor]_[liquidation-incentive]_[lending-governance-allocation]_[borrowing-governance-allocation]_[last-3-asset-code-characters]`
         - Notes:
             1. If the asset is not permitted to be used as collater the liquidation factor and liquidation incentive characters will be `NA`
             2. If the asset is not permitted to be lent out the interest rate numberator, utilization factor, and utilization addend characters will be `NA`
