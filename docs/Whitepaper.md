@@ -79,6 +79,13 @@ The YieldBlox tracker account has clawback enabled so that it can clawback this 
 - Utilization tokens are issued by the YieldBlox tracker account
 - The naming convention for the utilization token's code is `u[underlying-issuer-code][asset-overlap-code][underlying-asset-code]`
 
+#### Governance issuance tracker token
+Governance issuance tracker tokens are used to track the issuance that is allocated to a specific governance token on a givern issuance period. At the beginning of each issuance period a payment is made from the governance issuance tracker account to the governance issuance tracker account equal to the amount of YBX tokens to be paid out for each pool token of that kind. 
+
+**Token Identification:**
+- Governance issuance tracker tokens are issued by the governance issuance tracker account
+- The naming converntion for the token is `g[underlying-issuer-code][asset-overlap-code][underlying-asset-code]`
+
 #### Governance Token
 YieldBlox uses a token-based governance model. Users receive governance tokens for participating in the YieldBlox protocol by lending or borrowing. They can then use these tokens to create governance proposals that modify the YieldBlox protocol and vote on governance proposals. For information on the YieldBlox governance system, see our docs page: https://docs.yieldblox.com/#/
 
@@ -120,6 +127,19 @@ The YieldBlox Lending Pool holds all assets deposited by lenders and lends them 
 - Liquidate txFunction: 3 signers, weight 10
 - Flash txFunction: 3 signers, weight 10
 - Governance txFunction: 5 signers, weight 10
+
+#### Governance Issuance Tracker
+Thhis account sends governance issuance tokens to itself each governance issuance period. The payment amounts are equal to the number of governance tokens that should be issued for 1 pool token. These payments are used to calculate how many governance tokens should be issued to a user based on their holdings at that time.
+
+**Trustlines**
+- Governance Issuance Tracker totken
+
+**Signature Structure**
+- normal protocol signers
+
+*Flags*
+- AuthRevokable
+- ClawbackEnabled
 
 #### YieldBlox Tracker
 This account sends utilization token payments to the pool account when the utilization ratio increases and recieves them from the pool when the utilization rate decreases. These payments are aggregated to calculate the average utilization ratio for a loan or the utilization rate at the time a loan was originated.
