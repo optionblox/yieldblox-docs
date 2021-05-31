@@ -29,9 +29,17 @@ The governance tokens issued initially (the 3,000,000 mentioned in our equation)
 Governance proposals can be created by any account holding more than 1% of outstanding YBX tokens. Creating a proposal generates a governance transaction and a proposal account controlled by the governance contract. The proposal account stores the proposed update’s transaction hash as an account signer and stores the proposal status (either voting or approved) in an account data entry.
 
 ## Voting
-Users have three days to vote on proposals. They vote by adding a trustline for the asset `YES:proposalAccount` or `NO:proposalAccount` depending on whether they’re voting yes or no for the proposal. At the end of the voting period, votes are tallied by aggregating all accounts with YES or NO trustlines and recording the number of YBX tokens held by each account. If the vote passes (60% of votes are YES), the proposal status data entry is changed to “approved”. If it does not pass, the proposal account is deleted. A proposal vote must reach a quorum of 5% of outstanding governance tokens to pass.
+Users have three days to vote on proposals. They vote by adding a trustline for the asset `YES:proposalAccount` or `NO:proposalAccount` depending on whether they’re voting yes or no for the proposal. Once they add the trustline the user must create a manageSellOffer that offers to sell their YBX for YES or NO at a price of 1. This offer will never be filled, we just use it to tally votes. At the end of the voting period, votes are tallied by aggregating all accounts with YES or NO trustlines and recording the number of YBX tokens held by each account. If the vote passes (60% of votes are YES), the proposal status data entry is changed to “approved”. If it does not pass, the proposal account is deleted. A proposal vote must reach a quorum of 5% of outstanding governance tokens to pass.
 
 ## Proposal Implementation
 There is a 2-day delay before implementation after a proposal passes. Proposals are implemented by using the Governance txFunction to sign the update’s transaction hash (which is a proposal account signer) and deleting the proposal account.
+
+## Non-standard governance proposals
+
+### Revoke Signer
+One risk of the TSS solution is compromised turret keys. This risk is mitigated because the YieldBlox governance token holders choose the turrets the protocol uses, and will hopefully always pick only the most trustworthy turrets. As a further security measure we have added a revokeSigner option to the Governance txFunction. In emergencies this can be used to remove one turrets signing key and replace it with a different turret's key. Unlike governance proposal txFunctions this txFunction does not have a voting or que period. As soon as the proposal account reaches 15% of governance tokens voting yes the proposal will be implemented.This operation can only be ran twice per day to prevent abuse.
+
+### Freeze Protocol
+The other main risk of the TSS solution is a bug in the smart contracts. While we have thoroughly tested our smart contracts and had them audited it is still possible that a bug slips through the cracks. To protect against this possibility we have added a freezeProtocol option to the Governance txFunction. This simply prevents any specified txFunctions except for the Governance txFunction from being ran. The idea is we can call this txFunction if someone notices a bug and it will give us time to pass a governance proposal to fix it. Like the revokeSigner option, this proposal does not have a voting or que period, as soon as the proposal account reaches 15% of governance tokens voting yes the proposal will be implemented. This operation can be reverted using either a governance txFuncion or a freeze protocol command.
 
 

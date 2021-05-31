@@ -98,10 +98,12 @@ The YieldBlox Lending Pool holds all assets deposited by lenders and lends them 
             1. If the asset is not permitted to be used as collater the liquidation factor and liquidation incentive characters will be `NA`
             2. If the asset is not permitted to be lent out the interest rate numberator, utilization factor, and utilization addend characters will be `NA`
             3. If the asset is less than 10 characters long the last 3 asset code characters will be blank, governance allocation will be the end of the data entry value.
-2. *Asset Issuers*: Storying asset issuer account IDs
+2. *Asset Issuers*: Stores asset issuer account IDs
     - Data entry key: `[underlying-issuer-code][asset-overlap-code][underlying-asset-code(first 9 characters)]_Issuer`
     - Data entry value: `[underlying-asset-issuer-public-key]`
-
+3. *Contract Frozen*: Records whether contracts are frozen or not
+    - Data entry key: `frozen_contracts`
+    - Data entry value: `[contract-name]-[T/F]_[contract-name]-[T/F]...`
 **Trustlines**
 - All supported assets
 
@@ -170,9 +172,19 @@ The Liquidate txFunction is used to liquidate a delinquent accounts loans. Accou
         3. Liquidation Penalty
 5. *Governance txFunction*\
 The Governance txFunction is used to modify the protocol in any way, from tweaking the interest rate calculation to modifying the core txFunctions. Governance is a three-stage txFunction. 
-    1. First Stage: The first stage creates a governance proposal by creating a proposal account that contains the proposed update's transaction hash as a signer. Users vote on the proposal by adding trustlines for `YES:proposalAccount` or `NO:proposalAccount assets`. 
+    1. First Stage: The first stage creates a governance proposal by creating a proposal account that contains the proposed update's transaction hash as a signer. Users vote on the proposal by adding trustlines for `YES:proposalAccount` or `NO:proposalAccount assets` and creating manageSellOffers selling their YBX tokens for YES or NO tokens at a price of 1. 
     2. Second Stage: At the end of a 3 day period, the votes are tallied by running the Governance txFunction again and providing the proposal account's public key. Each user's vote is worth the number of governance tokens that their account holds. If a proposal passes, then the proposal account marks itself as approved using an account data entry. If it fails the proposal account is deleted.
     3. Third Stage: After 2 days have passed, the governance txFunction is ran a third time and provided the proposal account's public key to carry out the third stage of the txFunction. This stage signs the proposed update's transaction hash approving it to be submitted.  
+    - Alternate Governance txFunction operations
+        - *revokeSigner*\
+        This command allows governance token holders to immediatley remove a signer from the protocol accounts and replace it with a different one. This operation can only be ran twice per day. This is a 2 stage operation.
+            1. First Stage: The first stage creates a proposal account that is labeled a revokeSigner operation. The proposal account will also contain a data entry with the proposed transaction hash. Users vote for the proposal with the method outlined previously.
+            2. Second Stage: As soon as 15% of governance token holders have voted yes the second stage of the operation can occur. In this stage the proposal is immediatley implemented by signing the proposed transaction hash.
+        - *lockProtocol*\
+        This command allows governance token holders to lock any specified protocol operations besides the Governance txFunction. They can be unlocked using another lockProtocol command or a governanceProposal command. This is also a 2 stage operation.
+            1. First Stage: The first stage creates a proposal account that is labeled a revokeSigner operation. The proposal account will also contain a data entry with the proposed transaction hash. Users vote for the proposal with the method outlined previously.
+            2. Second Stage: As soon as 15% of governance token holders have voted yes the second stage of the operation can occur. In this stage the proposal is immediatley implemented by signing the proposed transaction hash.
+
 6. *swapRate txFunction*\
 This txFunction is used by borrowers to swap between fixed and floating rates. It can also be used by any protocol participant to rebalance a borrowers stable rate if it falls too far below the market rate. 
 7. *Flash txFunction*\
@@ -340,5 +352,5 @@ Used to calculate the amount of YBX that should be issued at a given time.
 
 *I*= YBX issued in this instance\
 *T* = Total YBX tokens to be issued\
-*O* = Total YBX tokens currently outstanding\
+*O* = Total YBX tokens currently outstanding\   
 
