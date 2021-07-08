@@ -23,7 +23,7 @@ This whitepaper covers the technical details of YieldBlox's decentralized lendin
 <p>&nbsp;</p>
 
 ## Introduction:
-The YieldBlox protocol serves as a tier-3 blockchain app, a layer between YieldBlox web-app users and the Stellar ledger. Users link their wallets to YieldBlox's web-app, which takes user inputs and communicates them to the YieldBlox protocol. The protocol uses TSS txFunctions to build and sign Stellar transactions that carry out protocol operations. Users approve these transactions with their wallet and receive the result of their transaction, whether that's pool tokens or a loan.
+The YieldBlox protocol serves as a tier-3 blockchain app, a layer between YieldBlox web-app users and the Stellar ledger. Users link their wallets to YieldBlox's web-app, which takes user inputs and communicates them to the YieldBlox protocol. The protocol uses TSS txFunctions to build and sign Stellar transactions that carry out protocol lending operations. Users approve these transactions with their wallet and receive the result of their transaction, whether that's pool tokens or a loan.
 
 ### High-Level Protocol Diagram
 
@@ -31,12 +31,25 @@ The YieldBlox protocol serves as a tier-3 blockchain app, a layer between YieldB
 
 ## Protocol Structure
 The YieldBlox protocol facilitates lending by utilizing a network of protocol accounts, tokens, and claimable balances.
+### YiedlBlox Governance
+YieldBlox is completeley decentralized in that the core team does not retain control over the protocol after it is released. The protocol uses a decentralized governance token model to make changes to the protocol. YieldBlox distributes a Stellar-based governance token called YBX to protocol users. This tokens is used to control the protocol by voting on proposed protocol changes using the governance txFunction. The result of this system is the control and future of the protocol are purely in the hands of its users.
 ### Loan Terms
 Loans can be taken out for any time period as long as the user maintains an account health factor above 1 (an accounts health factor is based on the accounts total liability value, collateral value, and collateral liquidation factors). If the accounts health factor falls below 1, the accounts loans can be liquidated by another protocol participant until their account health factor increases to 1.01.
 ### Loan Interest Rates
-Users can borrow from YieldBlox at either fixed or floating rates. Floating rates are based purely on demand and will fluctuate based on the borrowed assets utilization ratio. Fixed rates are a multiple of the floating rate at loan origination. They will always be higher than floating rates but some borrowers may prefer the stability of fixed rates rates. 
+Users can borrow from YieldBlox at either fixed or floating rates. Floating rates are based purely on demand and will fluctuate based on the borrowed assets utilization ratio. Fixed rates are a multiple of the floating rate at loan origination. They will always be higher than floating rates but some borrowers may prefer the stability of fixed rates rates.
 #### Rate Swapping
 A loans fixed rate can be force rebalanced up to the current stable rate if the loans rate has fallen below the market floating rate. This is accomplished with the swapRate txFunction. User's can also use the swapRate txFunction to swap their loan from fixed to the current floating rate or from floating to the current fixed rate.
+#### Interest Rate Distribution
+90% of interest rate fees are sent directly to the pool to distribute them to protocol lenders. Lenders will withdraw these fees when they burn their pool tokens. The remaining 10% of fees are used to repurchase and YBX tokens on the Stellar DEX. This repurchasing is necessary to support the YBX backstop which we will go over in the next section.
+### Collateralization and Liquidation
+#### Definitions
+Before we discuss loan collateralization and position liquidation we must define *"Health Factor*", *"Liquidation Factor*", *"Liquidation Incentive*". The first of these is *"Health Factor"*. An accounts health factor is a measure of it's collateralization levels. To originate a loan a user must ensure that their health factor will be above 1.2 after loan origination. If a users account health factor drops below one their positions can be liquidated until their health factor reaches 1.01. Health factor is calculated with the users liability(outstanding loan value+accrued interest) value, collateral value, average collalteral liquidation factor, and average collateral liquidation incentive. Liquidation factors are assigned to supported assets by the protocol, they govern the point at which a position the asset is collateralizing can be liquidated. Liquidation incentives are also assigned to supported assets by the protocol, they govern the discount liquidators will recieve when withdrawing a collateralized asset from the protocol during a liquidation. 
+#### Collateralization
+Whenever a user borrows from the YieldBlox protocol they must provide collateral by allocating pool lending deposits to act as collateral. They must deposit sufficient collateral to keep their health factor above 1.2 and if their health factor ever drops below 1 their positions can be liquidated. Collateralized assets are converted into pool tokens so that they can be lent out while serving as collateral. This allows borrowers to generate interest on their collateral deposits. It should be noted that this does not increase protocol risk. In the case of a liquidation, liquidators will withdraw the pool token rather than it's associated underlying asset.
+#### Liquidation
+Borrowers can be liquidated if their account health factor drops below 1. This means that another protocol user can call the liquidation txFunction and repay a portion of the borrowers debt in exchange for a portion of the borrowers collateral. The borrower can only be liquidated to the point where their health factor reaches 1.01. This means borrowers are unlikely to have their position fully liquidated. To incentivize liquidations of undercollateralized positions, liquidators recieve a discount on the assets they withdraw from the borrowers collateral based on the collateralized assets liquidation incentive. For example, if a liquidator repays 100 USD of a borrowers position and the borrowers collateral has a liquidation incentive of 1.05, the liquidator is permitted to withdraw 105 USD worth of the collateralized asset.
+#### YBX Backstop
+In cases of extreme volatility it is possible for the liquidation incentive to be impossible to pay out under normal market conditions. This could happen if the value of the users liability increased drastically in a very short amount of time or the value of the users collateral suddenly plunged. To ensure the undercollateralized loan is still liquidated YieldBlox uses the YBX backstop system. If the liquidation txFunction is ran to liquidate a position that cannot provide the liquidation incentive due to market conditions, the txFunction will recognize this with its price feed and reduce the amount of the loan the liquidator is expected to repay to the point where the liquidation incentive can be withdrawn. The txFunction will then repay the remaining portion of the loan by minting new YBX and selling it on the Stellar DEX for the required repayment asset and amount. This is done using a pathPayment operation. To compensate for this backstop 10-20% of interest rate fees are used to re-purchase and burn YBX on the DEX. The best way to think about this system is the protcol issuing debt to YBX holders to cover uncollectable user-debt and repurchasing this debt over time through YBX buybacks.  
 ### Protocol Data Feeds
 The YieldBlox protocol relies on utilization and price feeds to function. 
 #### Utilization Feed
@@ -90,7 +103,7 @@ Governance issuance tracker tokens are used to track the issuance that is alloca
 YieldBlox uses a token-based governance model. Users receive governance tokens for participating in the YieldBlox protocol by lending or borrowing. They can then use these tokens to create governance proposals that modify the YieldBlox protocol and vote on governance proposals. For information on the YieldBlox governance system, see our docs page: https://docs.yieldblox.com/#/
 
 **Token Identification:**
-- Governance tokens are issued by the YieldBlox lending pool account
+- Governance tokens are issued by the YieldBlox tracker account
 - The asset code for governance tokens is `YBX`
 
 ### Protocol Accounts
@@ -99,14 +112,14 @@ The YieldBlox Lending Pool holds all assets deposited by lenders and lends them 
 
 **Account Data Entries**
 1. *Asset Data*: Stores underlying asset information. Seperate data entry for every asset supported by the pool
-    - Data entry key: `[underlying-issuer-code][asset-overlap-code][underlying-asset-code(first 9 characters)]_Data`
-    - Data entry value: `[interest-rate-numerator]_[utilization-factor]_[utilization-addend]_[liquidation-factor]_[liquidation-incentive]_[lending-governance-allocation]_[borrowing-governance-allocation]_[last-3-asset-code-characters]`
+    - Data entry key: `[underlying-issuer-code]_[asset-overlap-code]_[underlying-asset-code(first 9 characters)]_Data`
+    - Data entry value: `[exponential-constant]_[base-rate-constant]_[peak-rate-constant]_[liquidation-factor]_[liquidation-incentive]_[lending-governance-allocation]_[borrowing-governance-allocation]_[YBX-Fee-allocation]_[last-3-asset-code-characters]`
         - Notes:
             1. If the asset is not permitted to be used as collater the liquidation factor and liquidation incentive characters will be `NA`
             2. If the asset is not permitted to be lent out the interest rate numberator, utilization factor, and utilization addend characters will be `NA`
-            3. If the asset is less than 10 characters long the last 3 asset code characters will be blank, governance allocation will be the end of the data entry value.
+            3. If the asset is less than 10 characters long the last 3 asset code characters will be blank, YBX fee allocation will be the end of the data entry value.
 2. *Asset Issuers*: Stores asset issuer account IDs
-    - Data entry key: `[underlying-issuer-code][asset-overlap-code][underlying-asset-code(first 9 characters)]_Issuer`
+    - Data entry key: `[underlying-issuer-code]_[asset-overlap-code]_[underlying-asset-code(first 9 characters)]_Issuer`
     - Data entry value: `[underlying-asset-issuer-public-key]`
 3. *Contract Frozen*: Records whether contracts are frozen or not
     - Data entry key: `frozen_contracts`
@@ -374,3 +387,13 @@ Used to calculate the amount of YBX that should be issued at a given time.
 *T* = Total YBX tokens to be issued\
 *O* = Total YBX tokens currently outstanding\   
 
+#### YBX Backstop mount
+Used to calculate how much of the users liability should be repaid with the YBX backstop.
+
+![\Large](https://latex.codecogs.com/svg.latex?R%3D%2%5Cfrac%7B%5Coverline%7BF_a%7D*V_c-1.01*V_l%7D%7B%5Coverline%7BI_a%7D*%5Coverline%7BF_a%7D-1.01%7D*%5coverline%7BI_a%7D-V_c)
+
+*R*= Amount of the users liability that should be repaid with the YBX backstop
+*V<sub>c</sub>*= Collateral value\
+*F̅<sub>a</sub>*= Average liquidation factor for the accounts collateral deposits\
+*V<sub>l</sub>*= Liability value\
+*I̅_a*= Average liquidation incentive for the accounts collateral deposits
